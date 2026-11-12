@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="EmpowerU Wazuh detections pack: custom rules, starter dashboard, and validation notes.">
+  <title>Wazuh pack — EmpowerU LLC</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../assets/mark.svg" alt="">
+        <span>EmpowerU LLC<small>Defensive security tooling</small></span>
+      </a>
+      <nav class="primary" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="quick-start.html">Quick start</a>
+        <a href="wazuh-pack.html" aria-current="page">Wazuh pack</a>
+        <a href="installer.html">Installer</a>
+        <a href="security.html">Security</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap prose">
+      <h1>Wazuh detections pack</h1>
+      <p class="muted">Source: <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections">eu-wazuh-detections</a>. Defensive rules for a Wazuh manager <strong>you operate</strong>, derived from the community collector’s detections.</p>
+
+      <div class="callout">
+        <strong>Not tested on a live manager</strong>
+        <code>wazuh-logtest</code> was not available when this pack was published. The rules have not been tested against a live Wazuh manager. Parent rule IDs come from default Wazuh rule sets and can vary by version. Validate every rule with <code>wazuh-logtest</code> on your manager before you rely on the alerts.
+      </div>
+
+      <h2>Rule map</h2>
+      <p>MITRE ATT&amp;CK identifiers are included only where the mapping is clearly accurate. Absence of an ID is intentional. Full rationale is in the repository’s <code>docs/RULE-MAP.md</code>.</p>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Detects</th><th>MITRE ATT&amp;CK</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>100002</td><td>Start of a process commonly used as an unexpected network listener (<code>nc</code>, <code>ncat</code>, <code>socat</code>, <code>python -m http</code>, <code>busybox</code>)</td><td>T1571 Non-Standard Port</td></tr>
+          <tr><td>100010</td><td>Multiple failed PAM/syslog logins from the same source</td><td>T1110 Brute Force</td></tr>
+          <tr><td>100016</td><td>Multiple failed SSH logins from the same source</td><td>T1110 Brute Force</td></tr>
+          <tr><td>100011</td><td>Successful PAM/syslog login after that burst</td><td>T1110, T1078 Valid Accounts</td></tr>
+          <tr><td>100017</td><td>Successful SSH login after that burst</td><td>T1110, T1078 Valid Accounts</td></tr>
+          <tr><td>100012</td><td>Successful PAM/syslog login between 00:00 and 05:00</td><td>none (baseline deviation)</td></tr>
+          <tr><td>100018</td><td>Successful SSH login between 00:00 and 05:00</td><td>none (baseline deviation)</td></tr>
+          <tr><td>100013</td><td>Successful SSH login as root</td><td>T1078 Valid Accounts</td></tr>
+          <tr><td>100020</td><td>File-integrity change under <code>/usr/bin</code>, <code>/usr/sbin</code>, <code>/bin</code>, or <code>/sbin</code></td><td>none</td></tr>
+          <tr><td>100021</td><td>File-integrity change on <code>sshd_config</code> or sudoers paths</td><td>none</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Dashboard</h2>
+      <p><code>dashboards/eu-ec-detect-starter.ndjson</code> is a <strong>starter</strong> saved-object export for Wazuh Dashboard / OpenSearch Dashboards. It is labeled untested. Import may need adjustments for your Wazuh and OpenSearch versions, index pattern, and time field. A successful import is not validation of the detection rules.</p>
+
+      <h2>Install outline</h2>
+      <ol>
+        <li>Back up the manager and take a snapshot.</li>
+        <li>Copy <code>rules/eu_ec_detect_rules.xml</code> to the manager custom-rules directory (commonly <code>/var/ossec/etc/rules/</code>).</li>
+        <li>Run <code>wazuh-logtest</code> against representative log lines for your Wazuh version. Confirm parent SIDs (<code>530</code>, <code>550</code>, <code>5501</code>, <code>5503</code>, <code>5710</code>, <code>5715</code>) still mean what the pack assumes.</li>
+        <li>Reload the manager only after that review, under your own change control, on a system you own.</li>
+      </ol>
+      <p>The <a href="installer.html">installer</a> can copy the rules in dry-run (<code>--check</code>) first. It will not restart the manager.</p>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <p>© 2026 EmpowerU LLC. Licensed under the Apache License 2.0.</p>
+      <p><a href="../index.html">Back to home</a></p>
+    </div>
+  </footer>
+</body>
+</html>

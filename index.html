@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Open-source defensive security tooling published by EmpowerU LLC: access monitoring, Wazuh detection rules, and a dry-run installer.">
+  <title>EmpowerU LLC — defensive security tooling</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <img src="assets/mark.svg" alt="">
+        <span>EmpowerU LLC<small>Defensive security tooling</small></span>
+      </a>
+      <nav class="primary" aria-label="Primary">
+        <a href="index.html" aria-current="page">Home</a>
+        <a href="docs/quick-start.html">Quick start</a>
+        <a href="docs/wazuh-pack.html">Wazuh pack</a>
+        <a href="docs/installer.html">Installer</a>
+        <a href="docs/security.html">Security</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="wrap">
+      <h1>Defensive monitoring tools you can run on systems you own.</h1>
+      <p class="lede">EmpowerU LLC publishes a small set of open-source tools for access monitoring, evidence collection, and starter Wazuh detections. They are read-only by default, dry-run until you explicitly confirm, and limited to authorized, owned systems.</p>
+      <div class="actions">
+        <a class="btn" href="docs/quick-start.html">Quick start the collector</a>
+        <a class="btn-secondary" href="#tools">View the repositories</a>
+      </div>
+    </div>
+  </div>
+
+  <main id="content">
+    <div class="wrap prose">
+      <h2 id="tools">The tools</h2>
+      <p>Three companion repositories make up the public-ready toolkit. They are described only in terms of what the software actually does. This site does not offer a managed service, a certification, or a sales claim.</p>
+
+      <div class="cards">
+        <article class="card">
+          <h3>eu-ec-detect-community</h3>
+          <p>Bash toolkit that collects access evidence (users, logins, SSH and sudo excerpts, listeners), compares listeners to a baseline, and redacts secrets in reports. Dry-run / read-only by default.</p>
+          <a href="https://github.com/bravo1alpha95-dev/eu-ec-detect-community">View the repository</a>
+        </article>
+        <article class="card">
+          <h3>eu-wazuh-detections</h3>
+          <p>Custom Wazuh rules (IDs in the 100000+ range), optional decoders, and a starter dashboard derived from those detections. The rules have not been tested with wazuh-logtest against a live manager.</p>
+          <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections">View the repository</a>
+        </article>
+        <article class="card">
+          <h3>eu-monitor-installer</h3>
+          <p>One-command <code>./install.sh</code>, Docker Compose, and an Ansible playbook that copy the toolkit (and optionally the Wazuh rules) onto a host you own. Dry-run and <code>--check</code> are the defaults.</p>
+          <a href="https://github.com/bravo1alpha95-dev/eu-monitor-installer">View the repository</a>
+        </article>
+      </div>
+
+      <h2>Operating principles</h2>
+      <ul class="principles">
+        <li><strong>Defensive only, owned systems only.</strong> The tools do not target third-party systems and do not include offensive techniques.</li>
+        <li><strong>Dry-run by default.</strong> Collection is read-only. Any mutation requires both <code>CONFIRM=yes</code> and a completed Rules of Engagement file with <code>Status: AUTHORIZED</code>.</li>
+        <li><strong>Idempotent and explicit.</strong> Re-runs do not blindly overwrite operator-filled ROE or inventory files. Configuration uses <code>EU_*</code> names. No secrets are hardcoded.</li>
+        <li><strong>Evidence is treated as sensitive.</strong> Report directories are mode 700, report files are mode 600, and redaction runs before evidence is written. Redaction is still best-effort; review reports before sharing.</li>
+      </ul>
+
+      <h2>Documentation on this site</h2>
+      <ul class="principles">
+        <li><a href="docs/quick-start.html">Quick start</a> — copy the collector, set a placeholder CIDR to your own range, and run the one-command path.</li>
+        <li><a href="docs/wazuh-pack.html">Wazuh pack</a> — rule map, MITRE ATT&amp;CK IDs only where they are clearly accurate, and how to validate on your manager.</li>
+        <li><a href="docs/installer.html">Installer</a> — <code>./install.sh</code>, <code>ansible-playbook site.yml --check</code>, and the Docker helper image.</li>
+        <li><a href="docs/security.html">Security</a> — residual risks, reporting a vulnerability, and what the tools will not do.</li>
+      </ul>
+
+      <div class="callout">
+        <strong>About this site</strong>
+        This is a static documentation site, ready to be served by GitHub Pages. GitHub Pages is not enabled here, because enabling it would publish the site. This page describes only the open-source tools. It does not list clients, certifications, prices, or testimonials.
+      </div>
+
+      <h2>Contact</h2>
+      <p>For vulnerability reports and community questions, use <strong>[CONTACT EMAIL]</strong>. Do not send production evidence, secrets, or personal data to a public issue tracker.</p>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <p>© 2026 EmpowerU LLC. The tools and this site are licensed under the <a href="https://github.com/bravo1alpha95-dev/eu-security-site/blob/main/LICENSE">Apache License 2.0</a>.</p>
+      <p>This site is documentation for open-source software. It is not a statement of conformity, certification, or a service-level offering.</p>
+    </div>
+  </footer>
+</body>
+</html>

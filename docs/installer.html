@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Dry-run installer for the EmpowerU community monitoring toolkit: install.sh, Ansible, and Docker.">
+  <title>Installer — EmpowerU LLC</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../assets/mark.svg" alt="">
+        <span>EmpowerU LLC<small>Defensive security tooling</small></span>
+      </a>
+      <nav class="primary" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="quick-start.html">Quick start</a>
+        <a href="wazuh-pack.html">Wazuh pack</a>
+        <a href="installer.html" aria-current="page">Installer</a>
+        <a href="security.html">Security</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap prose">
+      <h1>Installer</h1>
+      <p class="muted">Source: <a href="https://github.com/bravo1alpha95-dev/eu-monitor-installer">eu-monitor-installer</a>. Copies the community toolkit, and optionally the Wazuh rules, onto a host you own. It does not install Wazuh packages, import GPG keys, enable systemd timers, or restart a manager.</p>
+
+      <h2>One command, dry-run by default</h2>
+      <pre><code># Print the plan; write nothing
+./install.sh
+
+# Include Wazuh rules in the plan
+./install.sh --with-wazuh-rules
+
+# Apply only with an authorized ROE
+CONFIRM=yes ./install.sh --prefix /opt/eu-ec-detect --roe /path/to/authorized-roe.md</code></pre>
+      <p><code>CONFIRM=yes</code> without a completed Rules of Engagement file (<code>Status: AUTHORIZED</code> and every <code>(fill)</code> field set) is refused. Existing <code>scope/roe.md</code> and <code>scope/inventory.md</code> at the destination are not overwritten.</p>
+
+      <h2>Ansible</h2>
+      <pre><code>cd ansible
+# Dry-run
+ansible-playbook site.yml --check
+
+# Apply
+ansible-playbook site.yml -e eu_monitor_confirm=yes -e eu_monitor_roe_path=/path/to/authorized-roe.md</code></pre>
+      <p>Copy <code>inventory/hosts.example.yml</code> to <code>inventory/hosts.yml</code> and replace the <code>10.0.0.10</code> placeholder with a host you own. The example inventory is not a real target list.</p>
+
+      <h2>Docker</h2>
+      <p>A helper image runs the <strong>read-only</strong> easy path inside the container. It does not, by default, monitor the host.</p>
+      <pre><code>docker compose build
+docker compose run --rm eu-collect</code></pre>
+      <p>Reports go to a named volume. <code>CONFIRM</code> is never set in the Compose file. The image runs as a non-root user, drops capabilities, and uses a read-only root filesystem.</p>
+      <div class="callout">
+        <strong>About validation of the image</strong>
+        Docker was not available in the environment that first published this repository, so <code>docker build</code> was not run there. The Dockerfile is written for Debian bookworm-slim with GNU sed. Build and review it on a machine you control before use.
+      </div>
+
+      <h2>After the files are in place</h2>
+      <p>Follow the <a href="quick-start.html">quick start</a> in the installed prefix: copy <code>.env.example</code> to <code>.env</code>, set <code>EU_SCOPE_CIDR</code>, fill the inventory and ROE, and run <code>./scripts/easy-run.sh</code>. Example systemd units are copied into <code>$prefix/systemd</code> and are not enabled by the installer.</p>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <p>© 2026 EmpowerU LLC. Licensed under the Apache License 2.0.</p>
+      <p><a href="../index.html">Back to home</a></p>
+    </div>
+  </footer>
+</body>
+</html>

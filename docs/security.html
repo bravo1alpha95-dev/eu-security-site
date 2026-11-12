@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Security practices and residual risks for EmpowerU's open-source defensive tooling.">
+  <title>Security — EmpowerU LLC</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../assets/mark.svg" alt="">
+        <span>EmpowerU LLC<small>Defensive security tooling</small></span>
+      </a>
+      <nav class="primary" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="quick-start.html">Quick start</a>
+        <a href="wazuh-pack.html">Wazuh pack</a>
+        <a href="installer.html">Installer</a>
+        <a href="security.html" aria-current="page">Security</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap prose">
+      <h1>Security</h1>
+      <p>Each repository has its own <code>SECURITY.md</code>. This page summarizes practices that apply across the toolkit.</p>
+
+      <h2>Reporting a vulnerability</h2>
+      <p>Please report security issues privately to <strong>[CONTACT EMAIL]</strong>. Do not open a public issue for a vulnerability, and do not attach production evidence, alerts, secrets, or personally identifiable information.</p>
+      <p>This is community open-source software. There is no published service-level agreement for response times. Describe the issue, the affected path, and a safe way to reproduce it with synthetic data.</p>
+
+      <h2>What the tools will not do</h2>
+      <ul>
+        <li>They will not target systems you do not own.</li>
+        <li>They will not mutate a host unless both <code>CONFIRM=yes</code> (or <code>eu_monitor_confirm=yes</code>) and a completed ROE with <code>Status: AUTHORIZED</code> are present.</li>
+        <li>They will not download vendor packages, import GPG keys, or pipe installers to a shell. Vendor fingerprints are not shipped in these repositories; copy them from current official vendor documentation.</li>
+        <li>They will not treat local baseline checksums as authentic against an attacker who already controls the operator account. Store baselines off-host or on immutable media if you need that assurance.</li>
+      </ul>
+
+      <h2>Residual risks to keep in view</h2>
+      <ul>
+        <li>Redaction is best-effort. Review every report before sharing it.</li>
+        <li>Parsing of <code>ss</code>, <code>last</code>, and auth logs varies by operating system. Counts of zero are data, not proof that a tool had a complete view.</li>
+        <li>The Wazuh rules are untested against a live manager. Parent SIDs can change between Wazuh versions. Untuned “unusual hours” and “multiple failures” rules will produce noise or miss events.</li>
+        <li>Same-user tampering of reports and checksums is possible. Path guards refuse symlinks and foreign ownership, but they cannot stop an attacker who already is the operator account.</li>
+      </ul>
+
+      <h2>Licenses and conduct</h2>
+      <p>The tools and this site are licensed under the Apache License 2.0, Copyright 2026 EmpowerU LLC. Contributions are under each repository’s <code>CONTRIBUTING.md</code> and Contributor Covenant Code of Conduct. Enforcement contact: <strong>[CONTACT EMAIL]</strong>.</p>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <p>© 2026 EmpowerU LLC. Licensed under the Apache License 2.0.</p>
+      <p><a href="../index.html">Back to home</a></p>
+    </div>
+  </footer>
+</body>
+</html>

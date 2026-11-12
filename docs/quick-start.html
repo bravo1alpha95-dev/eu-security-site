@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Quick start for the EmpowerU community access-monitoring toolkit.">
+  <title>Quick start — EmpowerU LLC</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../assets/mark.svg" alt="">
+        <span>EmpowerU LLC<small>Defensive security tooling</small></span>
+      </a>
+      <nav class="primary" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="quick-start.html" aria-current="page">Quick start</a>
+        <a href="wazuh-pack.html">Wazuh pack</a>
+        <a href="installer.html">Installer</a>
+        <a href="security.html">Security</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap prose">
+      <h1>Quick start</h1>
+      <p class="muted">The community collector lives in <a href="https://github.com/bravo1alpha95-dev/eu-ec-detect-community">eu-ec-detect-community</a>. It is read-only by default and only for systems you own.</p>
+
+      <h2>One-time setup</h2>
+      <ol>
+        <li>Clone the repository to an operator host you control.
+          <pre><code>git clone https://github.com/bravo1alpha95-dev/eu-ec-detect-community.git
+cd eu-ec-detect-community</code></pre>
+        </li>
+        <li>Create a local environment file and restrict its mode:
+          <pre><code>cp .env.example .env &amp;&amp; chmod 600 .env</code></pre>
+        </li>
+        <li>Edit <code>.env</code>. Set <code>EU_SCOPE_CIDR</code> to the authorized address range of systems you own. The example value <code>10.0.0.0/24</code> is a placeholder, not a network you should assume is yours.</li>
+        <li>Fill <code>scope/inventory.md</code> with hosts you own, and fill every <code>(fill)</code> field in the Rules of Engagement template <code>scope/roe.md</code>. Set <code>Status: AUTHORIZED</code> only when you have written authorization. Collection itself is read-only and does not require that status; the apply path does.</li>
+        <li>Run the one-command path:
+          <pre><code>./scripts/easy-run.sh</code></pre>
+        </li>
+      </ol>
+      <p>That command runs preflight, a full access-evidence collection, and a short summary. Nothing on the host is changed. Review the timestamped files under <code>reports/</code> before you share them. Reports are gitignored; do not commit them.</p>
+
+      <h2>Ongoing use</h2>
+      <ul>
+        <li>Re-run <code>./scripts/easy-run.sh</code> whenever you want a fresh snapshot, or schedule it with cron or systemd.</li>
+        <li>Run <code>./scripts/anomaly-checks.sh</code> to compare current listeners against a per-host baseline with a checksum sidecar.</li>
+        <li>Do not run <code>./scripts/20_apply.sh</code> with <code>CONFIRM=yes</code> until the ROE is complete. Even then, that script only writes a local Wazuh agent config stub and prints install commands for you to run after you verify vendor artifacts yourself. This project does not ship vendor GPG fingerprints.</li>
+      </ul>
+
+      <h2>Checks before you change the code</h2>
+      <pre><code>for script in scripts/*.sh; do bash -n "$script" || exit; done
+shellcheck -x scripts/*.sh
+python3 tests/test_regressions.py</code></pre>
+      <p>The regression suite has 32 tests, plus a community hygiene check. GitHub Actions runs the same commands.</p>
+
+      <p>To copy the toolkit onto a host with a dry-run installer, see the <a href="installer.html">installer</a>. To add starter Wazuh rules, see the <a href="wazuh-pack.html">Wazuh pack</a>.</p>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <p>© 2026 EmpowerU LLC. Licensed under the Apache License 2.0.</p>
+      <p><a href="../index.html">Back to home</a></p>
+    </div>
+  </footer>
+</body>
+</html>

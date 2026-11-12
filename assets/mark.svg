@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">EmpowerU LLC</title>
+  <rect width="64" height="64" rx="12" fill="#0b1f33"/>
+  <path d="M14 16h36v6H22v7h24v6H22v9h28v6H14V16z" fill="#e8f0e9"/>
+  <rect x="14" y="50" width="16" height="4" rx="1" fill="#3d8b7a"/>
+</svg>
