@@ -2,7 +2,7 @@
 
 Static documentation site for EmpowerU LLC's open-source defensive security tooling.
 
-It describes only the software in the three companion repositories, with links to them and short documentation pages (quick start, Wazuh pack, installer, security). It does **not** claim clients, certifications, pricing, or testimonials. Contact is shown as `[CONTACT EMAIL]` until a real address is published.
+It describes only the software in the three companion repositories, with links to them and short documentation pages (quick start, Wazuh pack, installer, security). It does **not** claim clients, certifications, pricing, or testimonials. Contact: bravo1alpha95@gmail.com.
 
 ## Companions
 
@@ -36,4 +36,4 @@ Do not run those steps until you are ready for the site to be reachable.
 
 Licensed under the [Apache License 2.0](LICENSE). Copyright 2026 EmpowerU LLC.
 
-Vulnerability reports: [SECURITY.md](SECURITY.md) and `[CONTACT EMAIL]`.
+Vulnerability reports: [SECURITY.md](SECURITY.md) and bravo1alpha95@gmail.com.
