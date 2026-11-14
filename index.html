@@ -21,6 +21,7 @@
         <a href="docs/quick-start.html">Quick start</a>
         <a href="docs/wazuh-pack.html">Wazuh pack</a>
         <a href="docs/installer.html">Installer</a>
+        <a href="blog/index.html">Blog</a>
         <a href="docs/security.html">Security</a>
       </nav>
     </div>
@@ -45,12 +46,12 @@
       <div class="cards">
         <article class="card">
           <h3>eu-ec-detect-community</h3>
-          <p>Bash toolkit that collects access evidence (users, logins, SSH and sudo excerpts, listeners), compares listeners to a baseline, and redacts secrets in reports. Dry-run / read-only by default.</p>
+          <p>Bash toolkit that collects access evidence (users, logins, SSH and sudo excerpts, listeners), compares listeners to a baseline, runs a read-only CIS-style hardening audit, and redacts secrets in reports. Dry-run / read-only by default.</p>
           <a href="https://github.com/bravo1alpha95-dev/eu-ec-detect-community">View the repository</a>
         </article>
         <article class="card">
           <h3>eu-wazuh-detections</h3>
-          <p>Custom Wazuh rules (IDs in the 100000+ range), optional decoders, and a starter dashboard derived from those detections. The rules were tested with wazuh-logtest on Wazuh 4.14.10; the dashboard is a starter.</p>
+          <p>Custom Wazuh rules (IDs in the 100000+ range), optional decoders, and a starter dashboard derived from those detections. The rules were verified with wazuh-logtest and a live manager + agent lab on Wazuh 4.14.10, and Sigma ports convert them to Splunk and Elasticsearch queries.</p>
           <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections">View the repository</a>
         </article>
         <article class="card">
@@ -73,12 +74,13 @@
         <li><a href="docs/quick-start.html">Quick start</a> — copy the collector, set a placeholder CIDR to your own range, and run the one-command path.</li>
         <li><a href="docs/wazuh-pack.html">Wazuh pack</a> — rule map, MITRE ATT&amp;CK IDs only where they are clearly accurate, and how to validate on your manager.</li>
         <li><a href="docs/installer.html">Installer</a> — <code>./install.sh</code>, <code>ansible-playbook site.yml --check</code>, and the Docker helper image.</li>
+        <li><a href="blog/index.html">Tutorials</a> — step-by-step guides: getting started, the Wazuh Docker lab, simulating detections, Sigma rules, and the hardening audit.</li>
         <li><a href="docs/security.html">Security</a> — residual risks, reporting a vulnerability, and what the tools will not do.</li>
       </ul>
 
       <div class="callout">
         <strong>About this site</strong>
-        This is a static documentation site served by GitHub Pages. This page describes only the open-source tools. It does not list clients, certifications, prices, or testimonials.
+        This is a static documentation site served by GitHub Pages. It describes only the open-source tools. It does not list clients, certifications, prices, or testimonials.
       </div>
 
       <h2>Contact</h2>

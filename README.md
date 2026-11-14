@@ -2,7 +2,7 @@
 
 Static documentation site for EmpowerU LLC's open-source defensive security tooling.
 
-It describes only the software in the three companion repositories, with links to them and short documentation pages (quick start, Wazuh pack, installer, security). It does **not** claim clients, certifications, pricing, or testimonials. Contact: bravo1alpha95@gmail.com.
+It describes only the software in the three companion repositories, with links to them, short documentation pages (quick start, Wazuh pack, installer, security), and a tutorials section under `blog/`. It does **not** claim clients, certifications, pricing, or testimonials. Contact: bravo1alpha95@gmail.com.
 
 ## Companions
 
@@ -22,12 +22,17 @@ There are no build steps, no webfonts, and no third-party scripts.
 
 ## GitHub Pages
 
-The site is published with GitHub Pages from the `main` branch, folder `/` (root), at
-<https://bravo1alpha95-dev.github.io/eu-security-site/>. `index.html` is at the root, links are
-relative, and `.nojekyll` makes Pages serve the files as-is. Every merge to `main` republishes it.
+The site is served by GitHub Pages from the `main` branch, folder `/` (root): <https://bravo1alpha95-dev.github.io/eu-security-site/>. Links are relative and `.nojekyll` is present, so Pages serves the files as-is. Tutorials are at [`blog/`](https://bravo1alpha95-dev.github.io/eu-security-site/blog/).
 
-A custom domain is optional. Do not commit a `CNAME` file until the domain is registered and
-its DNS points at GitHub Pages.
+Do not commit a `CNAME` file until a custom domain is intended.
+
+## Checks
+
+```bash
+python3 tests/test_site.py
+```
+
+The check parses every page, confirms local links, fragments, and the primary navigation (including the Blog link), confirms every tutorial in `blog/` is listed on the blog index, and requests every external `https` link. GitHub Actions runs it on every push and pull request.
 
 ## License
 

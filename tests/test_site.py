@@ -3,7 +3,8 @@
 
 Checks every .html file for a doctype, required tags, parseability,
 local href/src targets that exist on disk, in-page fragment ids,
-and that outbound https links return a successful HTTP response.
+the primary navigation (including Blog), the blog index listing every
+tutorial, and that outbound https links return a successful HTTP response.
 mailto: and fragment-only links are handled separately. No network
 secrets are required.
 """
@@ -30,6 +31,10 @@ class PageParser(HTMLParser):
         self.ids: set[str] = set()
         self.refs: list[tuple[str, str]] = []
         self.doctype = False
+        self.nav_links: list[str] = []
+        self.h1 = 0
+        self.times: list[str] = []
+        self._nav_depth = 0
 
     def handle_decl(self, decl: str) -> None:
         if decl.lower().startswith("doctype"):
@@ -38,11 +43,96 @@ class PageParser(HTMLParser):
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         self.tags.add(tag)
         attr = {k: (v or "") for k, v in attrs}
+        if tag == "nav" and "primary" in attr.get("class", "").split():
+            self._nav_depth = 1
+        elif tag == "nav" and self._nav_depth:
+            self._nav_depth += 1
+        if tag == "a" and self._nav_depth and attr.get("href"):
+            self.nav_links.append(attr["href"])
+        if tag == "h1":
+            self.h1 += 1
+        if tag == "time" and attr.get("datetime"):
+            self.times.append(attr["datetime"])
         if attr.get("id"):
             self.ids.add(attr["id"])
         for key in ("href", "src"):
             if key in attr and attr[key]:
                 self.refs.append((key, attr[key]))
+
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "nav" and self._nav_depth:
+            self._nav_depth -= 1
+
+
+# Primary navigation every page (except 404.html) must carry, as site-root paths.
+NAV_TARGETS = {
+    "index.html",
+    "docs/quick-start.html",
+    "docs/wazuh-pack.html",
+    "docs/installer.html",
+    "blog/index.html",
+    "docs/security.html",
+}
+# Tutorials that must exist and be listed on the blog index.
+BLOG_POSTS = {
+    "getting-started-community-edition.html",
+    "wazuh-docker-lab.html",
+    "simulating-detections.html",
+    "sigma-rules.html",
+    "hardening-audit.html",
+}
+
+
+def parse(path: Path) -> PageParser:
+    parser = PageParser()
+    parser.feed(path.read_text(encoding="utf-8"))
+    parser.close()
+    return parser
+
+
+def site_path(page: Path, href: str) -> str:
+    target = (page.parent / urldefrag(href)[0]).resolve()
+    try:
+        return target.relative_to(ROOT).as_posix()
+    except ValueError:
+        return href
+
+
+def check_nav_and_blog(pages: list[Path]) -> list[str]:
+    """Primary nav (with Blog) on every page; blog index lists every tutorial."""
+    errors: list[str] = []
+    for page in pages:
+        rel = page.relative_to(ROOT).as_posix()
+        if rel == "404.html":
+            continue
+        got = {site_path(page, h) for h in parse(page).nav_links}
+        missing = NAV_TARGETS - got
+        if missing:
+            errors.append(f"{rel}: primary nav missing {', '.join(sorted(missing))}")
+
+    blog = ROOT / "blog"
+    index = blog / "index.html"
+    if not index.exists():
+        return errors + ["blog/index.html does not exist"]
+    posts = {p.name for p in blog.glob("*.html") if p.name != "index.html"}
+    for name in sorted(BLOG_POSTS - posts):
+        errors.append(f"blog/{name}: expected tutorial is missing")
+    listed = {site_path(index, h) for _, h in parse(index).refs}
+    for name in sorted(posts):
+        if f"blog/{name}" not in listed:
+            errors.append(f"blog/index.html does not link to blog/{name}")
+        post = parse(blog / name)
+        if post.h1 != 1:
+            errors.append(f"blog/{name}: expected exactly one <h1>, found {post.h1}")
+        if not post.times:
+            errors.append(f"blog/{name}: missing <time datetime=...>")
+        if "blog/index.html" not in {site_path(blog / name, h) for _, h in post.refs}:
+            errors.append(f"blog/{name}: no link back to the blog index")
+    home_links = {site_path(ROOT / "index.html", h) for _, h in parse(ROOT / "index.html").refs}
+    if "blog/index.html" not in home_links:
+        errors.append("index.html: no link to blog/index.html")
+    return errors
 
 
 def discover_html() -> list[Path]:
@@ -152,6 +242,8 @@ def main() -> int:
                 if fragment not in parser.ids:
                     errors.append(f"{rel}: in-page fragment #{fragment} not found")
 
+    errors.extend(check_nav_and_blog(pages))
+
     if errors:
         print("HTML / link check failed:")
         for item in errors:
@@ -159,6 +251,7 @@ def main() -> int:
         return 1
 
     print(f"OK: {len(pages)} HTML pages passed sanity and link checks")
+    print(f"OK: primary nav (with Blog) on every page; {len(BLOG_POSTS)} tutorials listed on blog/index.html")
     if checked_external:
         print(f"OK: {len(checked_external)} unique external https links responded successfully")
     return 0

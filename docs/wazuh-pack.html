@@ -21,6 +21,7 @@
         <a href="quick-start.html">Quick start</a>
         <a href="wazuh-pack.html" aria-current="page">Wazuh pack</a>
         <a href="installer.html">Installer</a>
+        <a href="../blog/index.html">Blog</a>
         <a href="security.html">Security</a>
       </nav>
     </div>
@@ -32,8 +33,8 @@
       <p class="muted">Source: <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections">eu-wazuh-detections</a>. Defensive rules for a Wazuh manager <strong>you operate</strong>, derived from the community collector’s detections.</p>
 
       <div class="callout">
-        <strong>Tested on Wazuh 4.14.10</strong>
-        The rules were exercised with <code>wazuh-logtest</code> on the official <code>wazuh/wazuh-manager:4.14.10</code> image, and the file-integrity rules fired on a live manager and agent. Other Wazuh versions have not been tested, and parent rule IDs can change between versions. Validate every rule with <code>wazuh-logtest</code> on your own manager before you rely on the alerts. Details are in the repository’s <code>docs/LOGTEST.md</code>.
+        <strong>Verified on Wazuh 4.14.10</strong>
+        Nine of the ten rules fired as the leaf alert in <code>wazuh-logtest</code> on <code>wazuh/wazuh-manager:4.14.10</code>. File-integrity rules 100020 and 100021 loaded in logtest (which does not run the FIM decoder) and fired on a live manager + agent lab on 2026-11-13. Parent rule IDs can still vary by version, so validate on your own manager before you rely on the alerts. See the <a href="../blog/wazuh-docker-lab.html">Docker lab tutorial</a>.
       </div>
 
       <h2>Rule map</h2>
@@ -55,6 +56,9 @@
           <tr><td>100021</td><td>File-integrity change on <code>sshd_config</code> or sudoers paths</td><td>none</td></tr>
         </tbody>
       </table>
+
+      <h2>Sigma ports</h2>
+      <p>Each rule also has an experimental Sigma port under <code>sigma/</code> in the repository, which converts to Splunk SPL and Elasticsearch ES|QL or Lucene. See <a href="../blog/sigma-rules.html">Using the EmpowerU Sigma rules</a>.</p>
 
       <h2>Dashboard</h2>
       <p><code>dashboards/eu-ec-detect-starter.ndjson</code> is a <strong>starter</strong> saved-object export for Wazuh Dashboard / OpenSearch Dashboards. It is labeled untested. Import may need adjustments for your Wazuh and OpenSearch versions, index pattern, and time field. A successful import is not validation of the detection rules.</p>
