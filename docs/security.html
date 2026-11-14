@@ -21,6 +21,7 @@
         <a href="quick-start.html">Quick start</a>
         <a href="wazuh-pack.html">Wazuh pack</a>
         <a href="installer.html">Installer</a>
+        <a href="../blog/index.html">Blog</a>
         <a href="security.html" aria-current="page">Security</a>
       </nav>
     </div>
@@ -47,7 +48,7 @@
       <ul>
         <li>Redaction is best-effort. Review every report before sharing it.</li>
         <li>Parsing of <code>ss</code>, <code>last</code>, and auth logs varies by operating system. Counts of zero are data, not proof that a tool had a complete view.</li>
-        <li>The Wazuh rules are untested against a live manager. Parent SIDs can change between Wazuh versions. Untuned “unusual hours” and “multiple failures” rules will produce noise or miss events.</li>
+        <li>The Wazuh rules were verified on Wazuh 4.14.10 only; other versions are untested. Parent SIDs can change between Wazuh versions. The Sigma ports are experimental and were test-converted, not run against live SIEM data. Untuned “unusual hours” and “multiple failures” rules will produce noise or miss events.</li>
         <li>Same-user tampering of reports and checksums is possible. Path guards refuse symlinks and foreign ownership, but they cannot stop an attacker who already is the operator account.</li>
       </ul>
 

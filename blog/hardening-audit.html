@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Run the read-only CIS-style hardening audit from the EmpowerU community toolkit and read its PASS/WARN/FAIL output.">
+  <title>Running the hardening audit — EmpowerU LLC</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../assets/mark.svg" alt="">
+        <span>EmpowerU LLC<small>Defensive security tooling</small></span>
+      </a>
+      <nav class="primary" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="../docs/quick-start.html">Quick start</a>
+        <a href="../docs/wazuh-pack.html">Wazuh pack</a>
+        <a href="../docs/installer.html">Installer</a>
+        <a href="../blog/index.html" aria-current="page">Blog</a>
+        <a href="../docs/security.html">Security</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap prose">
+      <p class="post-meta"><a href="index.html">Tutorials</a> · <time datetime="2026-11-14">November 14, 2026</time></p>
+      <article class="post">
+      <h1>Running the hardening audit</h1>
+      <p class="lede-dark"><a href="https://github.com/bravo1alpha95-dev/eu-ec-detect-community/blob/main/scripts/hardening-audit.sh"><code>scripts/hardening-audit.sh</code></a> in <a href="https://github.com/bravo1alpha95-dev/eu-ec-detect-community">eu-ec-detect-community</a> checks a subset of common CIS-benchmark-style settings on a Linux system you own and prints one <code>PASS</code>, <code>WARN</code>, or <code>FAIL</code> line per finding. It never changes anything.</p>
+
+      <div class="callout">
+        <strong>Read-only by design</strong>
+        The audit has no apply mode and ignores <code>CONFIRM</code>. It only reads files and runs status queries: <code>ufw status</code>, <code>firewall-cmd --state</code>, <code>nft list ruleset</code>, and <code>systemctl is-active</code> / <code>is-enabled</code>. It is a subset of CIS items, not a full benchmark or a compliance attestation.
+      </div>
+
+      <h2>1. Run it</h2>
+      <pre><code>git clone https://github.com/bravo1alpha95-dev/eu-ec-detect-community.git
+cd eu-ec-detect-community
+sudo ./scripts/hardening-audit.sh</code></pre>
+      <p>Run as root for complete results. Anything the audit cannot read, such as <code>/etc/sudoers</code> as a normal user, is reported as <code>WARN</code> rather than guessed.</p>
+
+      <h2>2. Read the results</h2>
+      <pre><code>PASS  ssh        PermitRootLogin no
+WARN  ssh        MaxAuthTries 6 (CIS recommends 4 or less)
+WARN  sudo       1 NOPASSWD sudoers entries (passwordless sudo; review each one)
+PASS  firewall   host firewall active: ufw
+PASS  perms      no world-writable files (or non-sticky world-writable dirs) in ...
+FAIL  auditd     auditd installed but not active
+# Summary: PASS=... WARN=... FAIL=...</code></pre>
+      <p>This is an illustrative excerpt, not output from a real host.</p>
+      <table>
+        <thead><tr><th>Area</th><th>What is checked</th></tr></thead>
+        <tbody>
+          <tr><td>SSH</td><td><code>PermitRootLogin</code>, <code>PasswordAuthentication</code>, <code>Protocol</code>, <code>MaxAuthTries</code>. Follows <code>Include</code> files and sshd's first-value-wins rule; <code>Match</code> blocks are not evaluated.</td></tr>
+          <tr><td>sudo</td><td><code>NOPASSWD</code> entries in <code>/etc/sudoers</code> and <code>/etc/sudoers.d/</code></td></tr>
+          <tr><td>Firewall</td><td>ufw active, firewalld running, or an nftables input hook</td></tr>
+          <tr><td>Permissions</td><td>World-writable files, and world-writable directories without the sticky bit, in <code>/etc</code> and the system binary directories</td></tr>
+          <tr><td>Updates</td><td>unattended-upgrades (Debian/Ubuntu) or dnf-automatic (Fedora/RHEL family)</td></tr>
+          <tr><td>auditd</td><td>Service active</td></tr>
+          <tr><td>Password aging</td><td><code>PASS_MAX_DAYS</code> ≤ 365, <code>PASS_MIN_DAYS</code> ≥ 1, <code>PASS_WARN_AGE</code> ≥ 7 in <code>/etc/login.defs</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2>3. Find the report</h2>
+      <p>The audit writes a redacted text report and a JSON summary with pass, warn, and fail counts to <code>reports/</code> (directory mode <code>700</code>, files <code>600</code>, written under <code>umask 077</code>) only after it finishes. Review the report before you share it.</p>
+
+      <h2>Options</h2>
+      <table>
+        <thead><tr><th>Variable</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td><code>EU_AUDIT_NO_REPORT=yes</code></td><td>Print findings only; write nothing</td></tr>
+          <tr><td><code>EU_AUDIT_FAIL_ON=fail</code></td><td>Exit 2 when any FAIL is found, for cron or CI</td></tr>
+          <tr><td><code>EU_AUDIT_ROOT=/mnt/image</code></td><td>Audit the files of a mounted image instead of <code>/</code>; live firewall and service checks are skipped</td></tr>
+          <tr><td><code>EU_AUDIT_MAX_LIST=20</code></td><td>Maximum world-writable paths listed in the report</td></tr>
+        </tbody>
+      </table>
+      <p>The full PASS / WARN / FAIL criteria are in the repository <a href="https://github.com/bravo1alpha95-dev/eu-ec-detect-community#hardening-audit">README</a>.</p>
+      <p>Exit codes: <strong>0</strong> audit completed, <strong>2</strong> FAIL findings with <code>EU_AUDIT_FAIL_ON=fail</code>, <strong>3</strong> operational error (no report published).</p>
+
+      <h2>Fixing findings</h2>
+      <p>The audit does not fix anything. Make changes under your own change control, then re-run it. For SSH, confirm the effective settings with <code>sudo sshd -T</code> before and after, and keep a second session open while you change <code>sshd_config</code> so you cannot lock yourself out.</p>
+      </article>
+      <p class="post-nav"><a href="index.html">← All tutorials</a></p>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <p>© 2026 EmpowerU LLC. Licensed under the Apache License 2.0.</p>
+      <p><a href="index.html">All tutorials</a> · <a href="../index.html">Back to home</a></p>
+    </div>
+  </footer>
+</body>
+</html>

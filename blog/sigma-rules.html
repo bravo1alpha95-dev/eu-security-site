@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Convert the EmpowerU detections to Splunk and Elasticsearch queries with Sigma and sigma-cli.">
+  <title>Using the EmpowerU Sigma rules — EmpowerU LLC</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../assets/mark.svg" alt="">
+        <span>EmpowerU LLC<small>Defensive security tooling</small></span>
+      </a>
+      <nav class="primary" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="../docs/quick-start.html">Quick start</a>
+        <a href="../docs/wazuh-pack.html">Wazuh pack</a>
+        <a href="../docs/installer.html">Installer</a>
+        <a href="../blog/index.html" aria-current="page">Blog</a>
+        <a href="../docs/security.html">Security</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap prose">
+      <p class="post-meta"><a href="index.html">Tutorials</a> · <time datetime="2026-11-14">November 14, 2026</time></p>
+      <article class="post">
+      <h1>Using the EmpowerU Sigma rules</h1>
+      <p class="lede-dark">Every EmpowerU Wazuh rule now has a <a href="https://sigmahq.io/">Sigma</a> port in <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections/tree/main/sigma">eu-wazuh-detections/sigma/</a>. Sigma is a vendor-neutral rule format, so the same detections can be converted to Splunk, Elasticsearch, and other SIEMs with <a href="https://github.com/SigmaHQ/sigma-cli">sigma-cli</a>.</p>
+
+      <div class="callout">
+        <strong>Experimental</strong>
+        All Sigma rules are <code>status: experimental</code>. They were linted and test-converted to Splunk, ES|QL, and Lucene, but not run against live Splunk or Elasticsearch data. The original Wazuh rules are the ones verified on Wazuh 4.14.10.
+      </div>
+
+      <h2>1. Install sigma-cli</h2>
+      <pre><code>git clone https://github.com/bravo1alpha95-dev/eu-wazuh-detections.git
+cd eu-wazuh-detections
+python3 -m venv .venv-sigma &amp;&amp; . .venv-sigma/bin/activate
+pip install -r sigma/requirements.txt</code></pre>
+      <p>The requirements file pins sigma-cli 3.1.0, pySigma 1.5.1, and the Splunk and Elasticsearch backends, the same versions CI uses.</p>
+
+      <h2>2. Lint</h2>
+      <pre><code>sigma check sigma/rules</code></pre>
+
+      <h2>3. Convert</h2>
+      <pre><code>python3 sigma/tests/convert_all.py --print splunk-raw   # Splunk, raw syslog in _raw
+python3 sigma/tests/convert_all.py --print esql         # Elasticsearch ES|QL
+python3 sigma/tests/convert_all.py --print lucene       # Lucene (no correlation rules)</code></pre>
+      <p>The helper script converts base rules before the correlation rules that use them. pySigma 1.5.1 needs that order, and plain <code>sigma convert</code> loads files in filesystem order, which varies between machines. Single non-correlation rules convert fine with <code>sigma convert -t splunk --without-pipeline sigma/rules/&lt;file&gt;.yml</code>.</p>
+
+      <h2>What maps to what</h2>
+      <table>
+        <thead><tr><th>Wazuh</th><th>Sigma type</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>100002</td><td>process_creation</td><td>Process-creation events instead of Wazuh process monitoring</td></tr>
+          <tr><td>100010, 100016</td><td>event_count correlation</td><td>8 failures in 180 s (PAM) or 120 s (SSH) from one source</td></tr>
+          <tr><td>100011, 100017</td><td>temporal correlation</td><td>Broader than Wazuh: any failure plus a success in 180 s</td></tr>
+          <tr><td>100012, 100018</td><td>linux auth / sshd</td><td>Sigma has no time-of-day condition; apply the 00:00–05:00 window in your SIEM</td></tr>
+          <tr><td>100013</td><td>linux sshd</td><td>Root SSH login</td></tr>
+          <tr><td>100020, 100021</td><td>file_change</td><td>Modified files only, like Wazuh 550 (not 554 "added")</td></tr>
+        </tbody>
+      </table>
+      <p>The full table, with one Sigma file per Wazuh ID, is in <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections/blob/main/sigma/README.md">sigma/README.md</a>.</p>
+
+      <h2>Field names</h2>
+      <p>Linux syslog has no standard Sigma fields, so the auth and SSH rules match the raw line in a field called <code>message</code> (the Elastic Common Schema name) and group by <code>host</code>, <code>rhost</code>, or <code>src_ip</code>. The included pipeline <code>sigma/pipelines/splunk_linux_raw.yml</code> maps <code>message</code> to <code>_raw</code> and <code>src_ip</code> to <code>src</code> for Splunk. For other schemas, write a small pySigma processing pipeline.</p>
+
+      <h2>Before production</h2>
+      <ul>
+        <li>Map field names to your data and test on your own logs.</li>
+        <li>Add the off-hours filter for 100012 and 100018.</li>
+        <li>Pair 100011 and 100017 with the burst rules if you want Wazuh's "eight failures first" behavior.</li>
+      </ul>
+      </article>
+      <p class="post-nav"><a href="index.html">← All tutorials</a></p>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <p>© 2026 EmpowerU LLC. Licensed under the Apache License 2.0.</p>
+      <p><a href="index.html">All tutorials</a> · <a href="../index.html">Back to home</a></p>
+    </div>
+  </footer>
+</body>
+</html>

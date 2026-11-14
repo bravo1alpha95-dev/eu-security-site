@@ -2,7 +2,7 @@
 
 Static documentation site for EmpowerU LLC's open-source defensive security tooling.
 
-It describes only the software in the three companion repositories, with links to them and short documentation pages (quick start, Wazuh pack, installer, security). It does **not** claim clients, certifications, pricing, or testimonials. Contact: bravo1alpha95@gmail.com.
+It describes only the software in the three companion repositories, with links to them, short documentation pages (quick start, Wazuh pack, installer, security), and a tutorials section under `blog/`. It does **not** claim clients, certifications, pricing, or testimonials. Contact: bravo1alpha95@gmail.com.
 
 ## Companions
 
@@ -20,17 +20,19 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 There are no build steps, no webfonts, and no third-party scripts.
 
-## GitHub Pages (not enabled)
+## GitHub Pages
 
-This repository is ready to be served by GitHub Pages: `index.html` is at the root, links are relative, and `.nojekyll` is present so Pages would serve the files as-is.
+The site is served by GitHub Pages from the `main` branch, folder `/` (root): <https://bravo1alpha95-dev.github.io/eu-security-site/>. Links are relative and `.nojekyll` is present, so Pages serves the files as-is. Tutorials are at [`blog/`](https://bravo1alpha95-dev.github.io/eu-security-site/blog/).
 
-**GitHub Pages is not enabled.** Enabling it would make the site public. To enable it later, after you have reviewed this repository and decided to publish:
+Do not commit a `CNAME` file until a custom domain is intended.
 
-1. Make the repository public, or keep it private and use GitHub Pages under a plan that allows private Pages, as you prefer.
-2. In the repository **Settings → Pages**, set the source to the `main` branch, folder `/` (root), and save.
-3. Optionally add a custom domain. Do not commit a `CNAME` file until that domain is intended.
+## Checks
 
-Do not run those steps until you are ready for the site to be reachable.
+```bash
+python3 tests/test_site.py
+```
+
+The check parses every page, confirms local links, fragments, and the primary navigation (including the Blog link), confirms every tutorial in `blog/` is listed on the blog index, and requests every external `https` link. GitHub Actions runs it on every push and pull request.
 
 ## License
 
