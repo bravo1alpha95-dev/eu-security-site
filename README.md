@@ -20,17 +20,14 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 There are no build steps, no webfonts, and no third-party scripts.
 
-## GitHub Pages (not enabled)
+## GitHub Pages
 
-This repository is ready to be served by GitHub Pages: `index.html` is at the root, links are relative, and `.nojekyll` is present so Pages would serve the files as-is.
+The site is published with GitHub Pages from the `main` branch, folder `/` (root), at
+<https://bravo1alpha95-dev.github.io/eu-security-site/>. `index.html` is at the root, links are
+relative, and `.nojekyll` makes Pages serve the files as-is. Every merge to `main` republishes it.
 
-**GitHub Pages is not enabled.** Enabling it would make the site public. To enable it later, after you have reviewed this repository and decided to publish:
-
-1. Make the repository public, or keep it private and use GitHub Pages under a plan that allows private Pages, as you prefer.
-2. In the repository **Settings → Pages**, set the source to the `main` branch, folder `/` (root), and save.
-3. Optionally add a custom domain. Do not commit a `CNAME` file until that domain is intended.
-
-Do not run those steps until you are ready for the site to be reachable.
+A custom domain is optional. Do not commit a `CNAME` file until the domain is registered and
+its DNS points at GitHub Pages.
 
 ## License
 

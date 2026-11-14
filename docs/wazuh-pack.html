@@ -32,8 +32,8 @@
       <p class="muted">Source: <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections">eu-wazuh-detections</a>. Defensive rules for a Wazuh manager <strong>you operate</strong>, derived from the community collector’s detections.</p>
 
       <div class="callout">
-        <strong>Not tested on a live manager</strong>
-        <code>wazuh-logtest</code> was not available when this pack was published. The rules have not been tested against a live Wazuh manager. Parent rule IDs come from default Wazuh rule sets and can vary by version. Validate every rule with <code>wazuh-logtest</code> on your manager before you rely on the alerts.
+        <strong>Tested on Wazuh 4.14.10</strong>
+        The rules were exercised with <code>wazuh-logtest</code> on the official <code>wazuh/wazuh-manager:4.14.10</code> image, and the file-integrity rules fired on a live manager and agent. Other Wazuh versions have not been tested, and parent rule IDs can change between versions. Validate every rule with <code>wazuh-logtest</code> on your own manager before you rely on the alerts. Details are in the repository’s <code>docs/LOGTEST.md</code>.
       </div>
 
       <h2>Rule map</h2>
