@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Trigger the EmpowerU Wazuh rules with harmless file changes and synthetic log samples.">
+  <title>Simulating detections safely in the lab — EmpowerU LLC</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../assets/mark.svg" alt="">
+        <span>EmpowerU LLC<small>Defensive security tooling</small></span>
+      </a>
+      <nav class="primary" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="../docs/quick-start.html">Quick start</a>
+        <a href="../docs/wazuh-pack.html">Wazuh pack</a>
+        <a href="../docs/installer.html">Installer</a>
+        <a href="../blog/index.html" aria-current="page">Blog</a>
+        <a href="../docs/security.html">Security</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap prose">
+      <p class="post-meta"><a href="index.html">Tutorials</a> · <time datetime="2026-11-14">November 14, 2026</time></p>
+      <article class="post">
+      <h1>Simulating detections safely in the lab</h1>
+      <p class="lede-dark">You can confirm every EmpowerU Wazuh rule without running a real attack. File-integrity rules are triggered by harmless changes inside the lab agent container. Authentication and process rules are exercised by replaying <strong>synthetic</strong> log lines through <code>wazuh-logtest</code>. Everything here runs against the <a href="wazuh-docker-lab.html">Docker lab</a> or a manager you operate.</p>
+
+      <div class="callout">
+        <strong>Defensive lab use only</strong>
+        Run these steps only in the lab or on systems you own. The samples use the documentation address range 203.0.113.0/24 and placeholder names. Nothing here touches another system.
+      </div>
+
+      <h2>File integrity: rules 100020 and 100021</h2>
+      <p>Wazuh uses different default rules for different file events. The EmpowerU rules are children of <strong>550</strong> (a file already in the baseline was modified). A brand-new file is <strong>554</strong> and does not match them.</p>
+      <table>
+        <thead><tr><th>Default ID</th><th>Meaning</th><th>Matches 100020 / 100021?</th></tr></thead>
+        <tbody>
+          <tr><td>550</td><td>Checksum changed: an existing file was modified</td><td>Yes</td></tr>
+          <tr><td>554</td><td>File added</td><td>No</td></tr>
+          <tr><td>553</td><td>File deleted</td><td>No</td></tr>
+        </tbody>
+      </table>
+      <p>From the <code>lab/</code> directory, with the agent Active:</p>
+      <pre><code>./fim-test.sh</code></pre>
+      <p>The script makes two harmless changes in the agent container: it updates the timestamp of <code>/usr/bin/ls</code> (the program's contents do not change) and appends a comment line to <code>/etc/ssh/sshd_config</code>. If <code>sshd_config</code> does not exist yet, it creates it and waits for a scan first, so the later change is a 550 event.</p>
+
+      <h2>Authentication and process rules: wazuh-logtest</h2>
+      <p>The repository's <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections/tree/main/tests/samples">tests/samples/</a> folder holds synthetic log lines for each rule. Replay them through <code>wazuh-logtest</code> on the lab manager:</p>
+      <pre><code># from the repository root
+docker exec -i wazuh-lab-manager /var/ossec/bin/wazuh-logtest &lt; tests/samples/100013-ssh-root-success.log
+
+# burst and "success after failures" samples must be one session: pipe the whole file
+docker exec -i wazuh-lab-manager /var/ossec/bin/wazuh-logtest &lt; tests/samples/session-100016-100017-invalid-user.log</code></pre>
+      <ul>
+        <li><strong>100010 / 100011</strong>: <code>session-100010-100011-pam.log</code> (eight PAM failures, then a PAM session opened).</li>
+        <li><strong>100016 / 100017</strong>: the two <code>session-100016-100017-*.log</code> files (invalid-user and failed-password bursts, then a success).</li>
+        <li><strong>100013</strong>: <code>100013-ssh-root-success.log</code>.</li>
+        <li><strong>100002</strong>: the five <code>100002-*.log</code> process-monitoring samples (<code>nc</code>, <code>ncat</code>, <code>socat</code>, <code>python -m http</code>, <code>busybox</code>).</li>
+        <li><strong>100012 / 100018</strong>: the off-hours rules use the manager's local clock, not the log timestamp. Set <code>TZ</code> on the manager so its local time is between 00:00 and 05:00 to see them fire.</li>
+      </ul>
+      <p><code>wazuh-logtest</code> on 4.14.10 does not run the file-integrity decoder, which is why the FIM rules are tested with real file changes instead. Results from the 2026-11-13 run are in <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections/blob/main/docs/LOGTEST.md">docs/LOGTEST.md</a>.</p>
+
+      <h2>Reading the alerts</h2>
+      <pre><code>docker exec wazuh-lab-manager tail -n 20 /var/ossec/logs/alerts/alerts.json</code></pre>
+      <p>Look for <code>"rule":{"id":"1000..."</code>. The EmpowerU rule replaces its parent as the leaf alert, so you will usually see 100020 rather than 550 for the same event.</p>
+
+      <h2>More lab material</h2>
+      <p>New lab scenarios are added under the repository's <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections/tree/main/lab">lab/</a> folder. Check <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections/blob/main/lab/README.md">lab/README.md</a> for the current list.</p>
+      </article>
+      <p class="post-nav"><a href="index.html">← All tutorials</a></p>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <p>© 2026 EmpowerU LLC. Licensed under the Apache License 2.0.</p>
+      <p><a href="index.html">All tutorials</a> · <a href="../index.html">Back to home</a></p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -21,6 +21,7 @@
         <a href="quick-start.html" aria-current="page">Quick start</a>
         <a href="wazuh-pack.html">Wazuh pack</a>
         <a href="installer.html">Installer</a>
+        <a href="../blog/index.html">Blog</a>
         <a href="security.html">Security</a>
       </nav>
     </div>
@@ -52,14 +53,17 @@ cd eu-ec-detect-community</code></pre>
       <ul>
         <li>Re-run <code>./scripts/easy-run.sh</code> whenever you want a fresh snapshot, or schedule it with cron or systemd.</li>
         <li>Run <code>./scripts/anomaly-checks.sh</code> to compare current listeners against a per-host baseline with a checksum sidecar.</li>
+        <li>Run <code>sudo ./scripts/hardening-audit.sh</code> for a read-only CIS-style check of SSH, sudo, firewall, permissions, updates, auditd, and password aging. See the <a href="../blog/hardening-audit.html">hardening audit tutorial</a>.</li>
         <li>Do not run <code>./scripts/20_apply.sh</code> with <code>CONFIRM=yes</code> until the ROE is complete. Even then, that script only writes a local Wazuh agent config stub and prints install commands for you to run after you verify vendor artifacts yourself. This project does not ship vendor GPG fingerprints.</li>
       </ul>
 
       <h2>Checks before you change the code</h2>
       <pre><code>for script in scripts/*.sh; do bash -n "$script" || exit; done
 shellcheck -x scripts/*.sh
-python3 tests/test_regressions.py</code></pre>
-      <p>The regression suite has 32 tests, plus a community hygiene check. GitHub Actions runs the same commands.</p>
+python3 tests/test_regressions.py
+python3 tests/test_community_hygiene.py
+python3 tests/test_hardening_audit.py</code></pre>
+      <p>The regression suite has 32 tests, plus 2 community hygiene checks and 12 hardening-audit tests. GitHub Actions runs the same commands.</p>
 
       <p>To copy the toolkit onto a host with a dry-run installer, see the <a href="installer.html">installer</a>. To add starter Wazuh rules, see the <a href="wazuh-pack.html">Wazuh pack</a>.</p>
     </div>

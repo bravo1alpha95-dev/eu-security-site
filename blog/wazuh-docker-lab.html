@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Start a disposable Wazuh 4.14.10 manager and agent with Docker and load the EmpowerU detection rules.">
+  <title>Setting up the Wazuh Docker lab — EmpowerU LLC</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../assets/mark.svg" alt="">
+        <span>EmpowerU LLC<small>Defensive security tooling</small></span>
+      </a>
+      <nav class="primary" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="../docs/quick-start.html">Quick start</a>
+        <a href="../docs/wazuh-pack.html">Wazuh pack</a>
+        <a href="../docs/installer.html">Installer</a>
+        <a href="../blog/index.html" aria-current="page">Blog</a>
+        <a href="../docs/security.html">Security</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap prose">
+      <p class="post-meta"><a href="index.html">Tutorials</a> · <time datetime="2026-11-14">November 14, 2026</time></p>
+      <article class="post">
+      <h1>Setting up the Wazuh Docker lab</h1>
+      <p class="lede-dark">The <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections">eu-wazuh-detections</a> repository ships a small Docker lab: one Wazuh manager and one Wazuh agent, both <code>4.14.10</code>, with the EmpowerU custom rules mounted into the manager. It is a disposable test bed, not a production install. The full step-by-step guide is <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections/blob/main/docs/SETUP-WAZUH-LAB.md">docs/SETUP-WAZUH-LAB.md</a>; this tutorial is the short version.</p>
+
+      <div class="callout">
+        <strong>Lab only</strong>
+        The lab's enrollment service accepts agents without a password, and there is no indexer or dashboard. Do not publish ports 1514, 1515, or 55000 to the internet.
+      </div>
+
+      <h2>What you need</h2>
+      <ul>
+        <li>A Linux or Mac computer you own with Docker Engine or Docker Desktop, Docker Compose v2 (<code>docker compose version</code>), and Git.</li>
+        <li>About 2 CPUs and 2–4 GB of free RAM.</li>
+        <li>Free host ports 1514, 1515, and 55000.</li>
+      </ul>
+
+      <h2>1. Start the lab</h2>
+      <pre><code>git clone https://github.com/bravo1alpha95-dev/eu-wazuh-detections.git
+cd eu-wazuh-detections/lab
+docker compose up -d</code></pre>
+      <p>If Docker says "permission denied" on <code>/var/run/docker.sock</code>, put <code>sudo</code> in front of the <code>docker</code> commands. The first run pulls the official images.</p>
+
+      <h2>2. Wait for the agent</h2>
+      <pre><code>docker exec wazuh-lab-manager /var/ossec/bin/wazuh-control status
+docker exec wazuh-lab-manager /var/ossec/bin/agent_control -l</code></pre>
+      <p>Continue when the agent shows as <code>Active</code>, for example <code>ID: 001, Name: wazuh-lab-agent, IP: any, Active</code>.</p>
+
+      <h2>3. Confirm the rules loaded</h2>
+      <pre><code>docker exec wazuh-lab-manager grep -E 'Total rules|ERROR|error:|eu_ec' /var/ossec/logs/ossec.log | tail
+docker exec wazuh-lab-manager ls -la /var/ossec/etc/rules/ /var/ossec/etc/decoders/</code></pre>
+      <p>You should see <code>eu_ec_detect_rules.xml</code> and <code>eu_ec_detect_decoders.xml</code>, and no rule-parse errors.</p>
+
+      <h2>4. Fire the file-integrity rules</h2>
+      <pre><code>./fim-test.sh</code></pre>
+      <p>The script touches <code>/usr/bin/ls</code> and appends a comment to <code>/etc/ssh/sshd_config</code> inside the agent container. You should see leaf alerts <strong>100020</strong> and <strong>100021</strong> at level 12 in <code>/var/ossec/logs/alerts/alerts.json</code> on the manager. Both fired this way on a live 4.14.10 lab on 2026-11-13. See <a href="simulating-detections.html">Simulating detections safely</a> for what each step does.</p>
+
+      <h2>5. Tear down</h2>
+      <pre><code>docker compose down      # stop; keep volumes
+docker compose down -v   # also wipe lab data</code></pre>
+
+      <h2>Troubleshooting, briefly</h2>
+      <ul>
+        <li><strong>Agent cannot resolve or reach the manager.</strong> The compose file maps <code>wazuh-lab-manager</code> to the Docker host gateway and publishes 1514/1515. Check <code>docker ps</code> and that nothing else holds those ports.</li>
+        <li><strong>Only rule 554 appears.</strong> The file was new, not modified. Modify it again after a scan has finished.</li>
+        <li><strong>Rules mounted after analysisd started.</strong> Run <code>docker restart wazuh-lab-manager</code>.</li>
+      </ul>
+      <p>For a full single-node server with indexer and dashboard, the setup guide links to the official Wazuh Quickstart and its hardware requirements (4 vCPU, 8 GiB RAM, and 50 GB of storage for up to 25 agents).</p>
+      </article>
+      <p class="post-nav"><a href="index.html">← All tutorials</a></p>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <p>© 2026 EmpowerU LLC. Licensed under the Apache License 2.0.</p>
+      <p><a href="index.html">All tutorials</a> · <a href="../index.html">Back to home</a></p>
+    </div>
+  </footer>
+</body>
+</html>

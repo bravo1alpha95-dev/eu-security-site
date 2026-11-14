@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Install and run the read-only EmpowerU community access-monitoring toolkit on a system you own.">
+  <title>Getting started with the community edition — EmpowerU LLC</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../assets/mark.svg" alt="">
+        <span>EmpowerU LLC<small>Defensive security tooling</small></span>
+      </a>
+      <nav class="primary" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="../docs/quick-start.html">Quick start</a>
+        <a href="../docs/wazuh-pack.html">Wazuh pack</a>
+        <a href="../docs/installer.html">Installer</a>
+        <a href="../blog/index.html" aria-current="page">Blog</a>
+        <a href="../docs/security.html">Security</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap prose">
+      <p class="post-meta"><a href="index.html">Tutorials</a> · <time datetime="2026-11-14">November 14, 2026</time></p>
+      <article class="post">
+      <h1>Getting started with the community edition</h1>
+      <p class="lede-dark"><a href="https://github.com/bravo1alpha95-dev/eu-ec-detect-community">eu-ec-detect-community</a> is a Bash toolkit that collects access evidence on Linux systems you own: users with login shells, recent and failed logins, SSH and sudo configuration excerpts, listening sockets, and auth-log excerpts. It is read-only by default and redacts secrets before anything is written.</p>
+
+      <h2>What you need</h2>
+      <ul>
+        <li>A Linux host you own and are authorized to inspect.</li>
+        <li>Bash, GNU sed, and the usual coreutils. <code>ss</code> is used for the listener checks.</li>
+        <li>Git, to clone the repository.</li>
+      </ul>
+
+      <h2>1. Clone and configure</h2>
+      <pre><code>git clone https://github.com/bravo1alpha95-dev/eu-ec-detect-community.git
+cd eu-ec-detect-community
+cp .env.example .env &amp;&amp; chmod 600 .env</code></pre>
+      <p>Open <code>.env</code> and set <code>EU_SCOPE_CIDR</code> to the authorized range of systems you own. The <code>10.0.0.0/24</code> value in <code>.env.example</code> is only a placeholder. The file is parsed as plain <code>KEY=value</code> data and is never sourced as a shell script, so values are limited to a safe character set.</p>
+      <p>Then fill in <code>scope/inventory.md</code> with the hosts you own and the Rules of Engagement template <code>scope/roe.md</code>. Collection does not need an authorized ROE; only the apply script does.</p>
+
+      <h2>2. Run the one-command path</h2>
+      <pre><code>./scripts/easy-run.sh</code></pre>
+      <p>This runs preflight, a full read-only evidence collection, and a short summary. Nothing on the host is changed. Output goes to <code>reports/</code>, which is created with mode <code>700</code>; every report file is mode <code>600</code>. Each run writes a timestamped text report and a small JSON summary.</p>
+      <div class="callout">
+        <strong>Review before you share</strong>
+        Redaction covers common secrets, tokens, IP addresses, and email addresses, but it is best-effort. Read the report before you send it anywhere, and never paste unreviewed evidence into a public issue.
+      </div>
+
+      <h2>3. Watch for new listeners</h2>
+      <pre><code>./scripts/anomaly-checks.sh</code></pre>
+      <p>The first run saves a per-host listener baseline with a SHA-256 sidecar. Later runs compare against it. Exit codes: <strong>0</strong> no changes, <strong>1</strong> changes, <strong>2</strong> baseline integrity failure, <strong>3</strong> operational failure.</p>
+
+      <h2>4. Check your hardening</h2>
+      <p>The toolkit also has a read-only CIS-style audit. See <a href="hardening-audit.html">Running the hardening audit</a>.</p>
+
+      <h2>About the apply script</h2>
+      <p><code>scripts/20_apply.sh</code> is dry-run scaffolding for a Wazuh agent. It changes nothing unless you set <code>CONFIRM=yes</code> <em>and</em> <code>scope/roe.md</code> has <code>Status: AUTHORIZED</code> with every field filled. Even then it only writes a local config stub and prints install commands for you to run after verifying vendor packages yourself.</p>
+
+      <h2>Run the checks yourself</h2>
+      <pre><code>for script in scripts/*.sh; do bash -n "$script" || exit; done
+shellcheck -x scripts/*.sh
+python3 tests/test_regressions.py
+python3 tests/test_community_hygiene.py
+python3 tests/test_hardening_audit.py</code></pre>
+      <p>GitHub Actions runs the same checks on every push and pull request.</p>
+
+      <h2>Next steps</h2>
+      <ul>
+        <li><a href="wazuh-docker-lab.html">Set up the Wazuh Docker lab</a> to load the EmpowerU detection rules.</li>
+        <li><a href="../docs/installer.html">Use the installer</a> to copy the toolkit onto a host in dry-run mode first.</li>
+      </ul>
+      </article>
+      <p class="post-nav"><a href="index.html">← All tutorials</a></p>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <p>© 2026 EmpowerU LLC. Licensed under the Apache License 2.0.</p>
+      <p><a href="index.html">All tutorials</a> · <a href="../index.html">Back to home</a></p>
+    </div>
+  </footer>
+</body>
+</html>
