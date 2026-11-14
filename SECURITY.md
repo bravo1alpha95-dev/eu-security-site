@@ -8,5 +8,5 @@ Please report security issues privately to **bravo1alpha95@gmail.com**. Do not o
 
 ## Notes
 
-- GitHub Pages is not enabled. Enabling it would publish the site.
+- The site is public on GitHub Pages; every merge to `main` republishes it. Review changes with that in mind.
 - Do not add tracking scripts, webfonts that phone home, or invented claims about EmpowerU LLC.
