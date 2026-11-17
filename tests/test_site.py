@@ -16,7 +16,7 @@ import urllib.error
 import urllib.request
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import urldefrag, urljoin, urlparse
+from urllib.parse import urldefrag, urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_TAGS = {"html", "head", "title", "body"}
@@ -165,8 +165,9 @@ def check_external(url: str) -> None:
             pass
         else:
             raise SystemExit(f"external link {url} returned HTTP {exc.code}") from exc
-    except Exception:
-        # Fall through to GET on HEAD transport failures too.
+    except OSError:
+        # Fall through to GET on HEAD transport failures too (URLError,
+        # timeouts, resets). Anything else is a bug and should surface.
         pass
     req = urllib.request.Request(url, method="GET", headers={"User-Agent": USER_AGENT})
     try:
@@ -175,6 +176,10 @@ def check_external(url: str) -> None:
                 raise SystemExit(f"external link {url} returned HTTP {resp.status}")
     except urllib.error.HTTPError as exc:
         raise SystemExit(f"external link {url} returned HTTP {exc.code}") from exc
+    except OSError as exc:
+        # Report as a link error (with the URL) instead of crashing the whole
+        # run with a bare traceback that drops every other finding.
+        raise SystemExit(f"external link {url} unreachable: {type(exc).__name__}") from exc
 
 
 def main() -> int:
