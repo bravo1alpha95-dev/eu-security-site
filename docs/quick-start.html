@@ -41,7 +41,7 @@ cd eu-ec-detect-community</code></pre>
         <li>Create a local environment file and restrict its mode:
           <pre><code>cp .env.example .env &amp;&amp; chmod 600 .env</code></pre>
         </li>
-        <li>Edit <code>.env</code>. Set <code>EU_SCOPE_CIDR</code> to the authorized address range of systems you own. The example value <code>10.0.0.0/24</code> is a placeholder, not a network you should assume is yours.</li>
+        <li>Edit <code>.env</code>. Set <code>EU_SCOPE_CIDR</code> to the authorized address range of systems you own. The example value <code>192.0.2.0/24</code> is a placeholder, not a network you should assume is yours.</li>
         <li>Fill <code>scope/inventory.md</code> with hosts you own, and fill every <code>(fill)</code> field in the Rules of Engagement template <code>scope/roe.md</code>. Set <code>Status: AUTHORIZED</code> only when you have written authorization. Collection itself is read-only and does not require that status; the apply path does.</li>
         <li>Run the one-command path:
           <pre><code>./scripts/easy-run.sh</code></pre>
