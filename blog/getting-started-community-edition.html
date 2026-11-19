@@ -45,7 +45,7 @@
       <pre><code>git clone https://github.com/bravo1alpha95-dev/eu-ec-detect-community.git
 cd eu-ec-detect-community
 cp .env.example .env &amp;&amp; chmod 600 .env</code></pre>
-      <p>Open <code>.env</code> and set <code>EU_SCOPE_CIDR</code> to the authorized range of systems you own. The <code>10.0.0.0/24</code> value in <code>.env.example</code> is only a placeholder. The file is parsed as plain <code>KEY=value</code> data and is never sourced as a shell script, so values are limited to a safe character set.</p>
+      <p>Open <code>.env</code> and set <code>EU_SCOPE_CIDR</code> to the authorized range of systems you own. The <code>192.0.2.0/24</code> value in <code>.env.example</code> is only a placeholder. The file is parsed as plain <code>KEY=value</code> data and is never sourced as a shell script, so values are limited to a safe character set.</p>
       <p>Then fill in <code>scope/inventory.md</code> with the hosts you own and the Rules of Engagement template <code>scope/roe.md</code>. Collection does not need an authorized ROE; only the apply script does.</p>
 
       <h2>2. Run the one-command path</h2>
