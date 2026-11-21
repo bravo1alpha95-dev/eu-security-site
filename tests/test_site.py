@@ -71,6 +71,7 @@ NAV_TARGETS = {
     "docs/quick-start.html",
     "docs/wazuh-pack.html",
     "docs/installer.html",
+    "docs/pricing.html",
     "blog/index.html",
     "docs/security.html",
 }
@@ -132,6 +133,28 @@ def check_nav_and_blog(pages: list[Path]) -> list[str]:
     home_links = {site_path(ROOT / "index.html", h) for _, h in parse(ROOT / "index.html").refs}
     if "blog/index.html" not in home_links:
         errors.append("index.html: no link to blog/index.html")
+    if "docs/pricing.html" not in home_links:
+        errors.append("index.html: no link to docs/pricing.html")
+
+    pricing = ROOT / "docs" / "pricing.html"
+    if not pricing.exists():
+        errors.append("docs/pricing.html does not exist")
+    else:
+        pricing_text = pricing.read_text(encoding="utf-8")
+        for snippet in ("$3,500", "$499", "$6,500", "$899", "$12,500", "$1,799"):
+            if snippet not in pricing_text:
+                errors.append(f"docs/pricing.html: missing approved price {snippet}")
+        if "mailto:Empoweru25@outlook.com" not in pricing_text:
+            errors.append("docs/pricing.html: missing mailto:Empoweru25@outlook.com")
+        for field_id in (
+            "pilot-name",
+            "pilot-company",
+            "pilot-email",
+            "pilot-size",
+            "pilot-message",
+        ):
+            if f'id="{field_id}"' not in pricing_text:
+                errors.append(f"docs/pricing.html: missing form field {field_id}")
     return errors
 
 

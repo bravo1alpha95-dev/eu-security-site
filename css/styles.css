@@ -246,3 +246,86 @@ a:focus-visible, button:focus-visible {
 .post h1 { margin-top: 0.4rem; }
 .lede-dark { font-size: 1.08rem; }
 .post-nav { margin-top: 2rem; }
+
+/* Pricing plans and the Book a pilot form */
+.frame-line {
+  font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+  color: var(--navy);
+}
+.motto { margin-top: 0; }
+.plans { margin-top: 1rem; }
+.card .price {
+  font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: var(--navy);
+  margin: 0.15rem 0 0.6rem;
+  line-height: 1.45;
+}
+.price-amount { font-size: 1.35rem; font-weight: 650; }
+
+.pilot-form {
+  max-width: 32rem;
+  margin: 1.2rem 0 1rem;
+  padding: 1.15rem 1.2rem 1.3rem;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.field { margin: 0 0 1rem; }
+.field label {
+  display: block;
+  font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  margin: 0 0 0.3rem;
+}
+.req { font-weight: 400; color: var(--ink-soft); font-size: 0.9em; }
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  max-width: 32rem;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+}
+.field textarea { resize: vertical; min-height: 8rem; }
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.field [aria-invalid="true"] {
+  border-color: #9a2d16;
+}
+.hint, .field-error { font-size: 0.9rem; margin: 0.35rem 0 0; }
+.hint { color: var(--ink-soft); }
+.field-error { color: #9a2d16; }
+.form-errors {
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+  border-left: 4px solid #c4843a;
+  padding: 0.75rem 1rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1rem 0;
+  max-width: 32rem;
+}
+button.btn {
+  font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  display: inline-block;
+  padding: 0.6rem 1.05rem;
+  border-radius: 999px;
+  border: 0;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: var(--teal-2);
+  color: #07211c;
+  cursor: pointer;
+}
+button.btn:hover { background: #4ea08e; }
+.noscript-note { max-width: 32rem; }

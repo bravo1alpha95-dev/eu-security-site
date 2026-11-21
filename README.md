@@ -2,7 +2,7 @@
 
 Static documentation site for EmpowerU LLC's open-source defensive security tooling.
 
-It describes only the software in the three companion repositories, with links to them, short documentation pages (quick start, Wazuh pack, installer, security), and a tutorials section under `blog/`. It does **not** claim clients, certifications, pricing, or testimonials. Contact: bravo1alpha95@gmail.com.
+It describes the software in the three companion repositories, with links to them, short documentation pages (quick start, Wazuh pack, installer, security, pricing and pilot), and a tutorials section under `blog/`. It does **not** claim clients, certifications, or testimonials. Vulnerability contact: bravo1alpha95@gmail.com. Pilot and sales contact: Empoweru25@outlook.com.
 
 ## Companions
 
