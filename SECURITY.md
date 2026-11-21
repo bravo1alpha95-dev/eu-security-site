@@ -1,6 +1,6 @@
 # Security Considerations — eu-security-site
 
-This repository is a static documentation site. It contains no backend, no forms that submit data, and no third-party scripts.
+This repository is a static documentation site. It contains no backend and no third-party scripts. The Pricing and pilot page has a first-party form that opens a pre-filled `mailto:` message in the visitor's email app; nothing is posted to this site or to a server we operate.
 
 ## Reporting vulnerabilities
 

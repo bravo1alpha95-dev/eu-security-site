@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="EmpowerU Sentinel plans and a form to book a pilot. Starter, Business, and Enterprise pricing for defensive monitoring built on our published collector, installer, and Wazuh detections.">
+  <title>Pricing and pilot — EmpowerU LLC</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../assets/mark.svg" alt="">
+        <span>EmpowerU LLC<small>Defensive security tooling</small></span>
+      </a>
+      <nav class="primary" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="quick-start.html">Quick start</a>
+        <a href="wazuh-pack.html">Wazuh pack</a>
+        <a href="installer.html">Installer</a>
+        <a href="pricing.html" aria-current="page">Pricing</a>
+        <a href="../blog/index.html">Blog</a>
+        <a href="security.html">Security</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap prose">
+      <h1>Pricing and pilot</h1>
+      <p class="frame-line">We EmpowerU with motivation, never manipulation.</p>
+      <p class="muted motto">Believe. Achieve. Succeed.</p>
+      <p>EmpowerU Sentinel is our hosted defensive monitoring service. It is built on the same open-source tools this site documents: the <a href="https://github.com/bravo1alpha95-dev/eu-ec-detect-community">community access-monitoring collector</a>, the <a href="https://github.com/bravo1alpha95-dev/eu-monitor-installer">monitor installer</a>, and the <a href="https://github.com/bravo1alpha95-dev/eu-wazuh-detections">Wazuh detections pack</a>. Every plan includes a one-time setup and a monthly subscription. The open-source repositories stay free to run on systems you own.</p>
+      <p>Self-serve checkout is not on this page yet. Checkout links will be added after Stripe is connected (planned for Monday, 23 November 2026). Until then, book a pilot with the form below.</p>
+
+      <h2 id="plans">Plans</h2>
+      <p>Asset limits and capabilities below come from the current Sentinel product editions. Setup is a one-time fee. Monthly prices are billed each month after setup.</p>
+
+      <div class="cards plans">
+        <article class="card">
+          <h3>Starter</h3>
+          <p class="price"><span class="price-amount">$3,500</span> setup<br><span class="price-amount">$499</span> per month</p>
+          <p>A starting Sentinel workspace for a small environment. Includes the secure dashboard, asset inventory (up to 100 assets), administrator sign-in, tenant isolation, and audit logging. Setup installs the collector and the Wazuh detections pack on systems you authorize, so you can review access evidence, listener baselines, and the starter alerts for logins, unexpected listeners, and file-integrity changes.</p>
+        </article>
+        <article class="card">
+          <h3>Business</h3>
+          <p class="price"><span class="price-amount">$6,500</span> setup<br><span class="price-amount">$899</span> per month</p>
+          <p>Everything in Starter, with room to grow: up to 1,000 assets, security reporting, and a private customer deployment. Production for this plan is set up to require multi-factor authentication. Audit records are kept against a 90-day retention target.</p>
+        </article>
+        <article class="card">
+          <h3>Enterprise</h3>
+          <p class="price"><span class="price-amount">$12,500</span> setup<br><span class="price-amount">$1,799</span> per month</p>
+          <p>Everything in Business, for larger or customer-hosted deployments: up to 10,000 assets and a 365-day audit retention target. Production start is gated on PostgreSQL with tenant isolation, multi-factor authentication, encrypted backups, and centralized logging, plus the production readiness checks in the deploy kit.</p>
+        </article>
+      </div>
+
+      <h2>What every plan is built on</h2>
+      <ul class="principles">
+        <li><strong>Access monitoring and evidence.</strong> The community collector gathers read-only evidence of users, logins, SSH and sudo excerpts, and network listeners, and can compare listeners to a baseline. A read-only CIS-style hardening audit is included in the toolkit.</li>
+        <li><strong>Wazuh detections.</strong> The published pack adds custom rules (IDs in the 100000+ range) for unexpected listeners, repeated failed logins, successful logins after that burst, logins in the early morning hours, root SSH logins, and file-integrity changes under system binary paths and on <code>sshd_config</code> or sudoers files. A starter dashboard export is available; it should be validated on your manager.</li>
+        <li><strong>Installer.</strong> The monitor installer can copy the toolkit, and optionally the Wazuh rules, onto a host you authorize. Dry-run is the default until you confirm.</li>
+        <li><strong>Sentinel workspace.</strong> A dashboard with tenant isolation, asset inventory, and audit logging, with sign-in through the service identity provider.</li>
+      </ul>
+      <p>Retention figures above are product targets, not a contractual service level. A draft service-level agreement is reviewed privately with customers and is not a published guarantee on this site.</p>
+
+      <h2 id="book-a-pilot">Book a pilot</h2>
+      <p>If you would like to start a pilot, send a short note with this form. It opens your email app with a pre-filled message to <a href="mailto:Empoweru25@outlook.com">Empoweru25@outlook.com</a>. Nothing is stored on this website. There is no backend and no payment step on this form.</p>
+      <p class="muted" id="pilot-privacy">Please do not include passwords, keys, payment details, production evidence, or other sensitive data. A name, company, work email, company size, and a short message are enough.</p>
+
+      <div id="pilot-form-errors" class="form-errors" role="alert" aria-live="polite" hidden></div>
+
+      <form id="pilot-form" class="pilot-form" action="mailto:Empoweru25@outlook.com" method="post" enctype="text/plain" data-contact="Empoweru25@outlook.com" aria-describedby="pilot-privacy" novalidate>
+        <div class="field">
+          <label for="pilot-name">Name <span class="req">(required)</span></label>
+          <input type="text" id="pilot-name" name="name" autocomplete="name" maxlength="80" required aria-describedby="pilot-name-error">
+          <p class="field-error" id="pilot-name-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="pilot-company">Company <span class="req">(required)</span></label>
+          <input type="text" id="pilot-company" name="company" autocomplete="organization" maxlength="80" required aria-describedby="pilot-company-error">
+          <p class="field-error" id="pilot-company-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="pilot-email">Email <span class="req">(required)</span></label>
+          <input type="email" id="pilot-email" name="email" autocomplete="email" maxlength="254" required aria-describedby="pilot-email-error">
+          <p class="field-error" id="pilot-email-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="pilot-size">Company size <span class="req">(required)</span></label>
+          <select id="pilot-size" name="company_size" required aria-describedby="pilot-size-error">
+            <option value="">Select one</option>
+            <option value="1-10">1–10 people</option>
+            <option value="11-50">11–50 people</option>
+            <option value="51-200">51–200 people</option>
+            <option value="201-1000">201–1,000 people</option>
+            <option value="1000+">1,000+ people</option>
+          </select>
+          <p class="field-error" id="pilot-size-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="pilot-message">Message <span class="req">(required)</span></label>
+          <textarea id="pilot-message" name="message" rows="6" maxlength="2000" required aria-describedby="pilot-message-hint pilot-message-error"></textarea>
+          <p class="hint" id="pilot-message-hint">A few sentences about your environment and which plan you are considering is plenty. Please leave out secrets and evidence files.</p>
+          <p class="field-error" id="pilot-message-error" hidden></p>
+        </div>
+        <button type="submit" class="btn">Open pre-filled email</button>
+      </form>
+      <p class="muted noscript-note">If your browser does not run scripts, use the button to open a blank message to Empoweru25@outlook.com, or write to that address directly and include the same fields.</p>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <p>© 2026 EmpowerU LLC. Licensed under the Apache License 2.0.</p>
+      <p><a href="../index.html">Back to home</a></p>
+    </div>
+  </footer>
+  <script src="../js/pilot-form.js"></script>
+</body>
+</html>
